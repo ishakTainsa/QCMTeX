@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+	<head>
+			<script src="ocrad.js"></script>
+	</head>
+	<body>
+	<h1>Reponses</h1>
+	<p>
+	o : case de reponse vide<br>
+	.  : case de reponse remplis
+	<br><br>
+	<img src="ocr.png"/>
+	Resultat d'analyse avec l'img ocr.png du dessus : <br>
+	<span id="res"></span><br><br>
+	</p>
+		<script>
+			function OCRImage(image){
+				var canvas = document.createElement('canvas')
+				canvas.width  = image.naturalWidth;
+				canvas.height = image.naturalHeight;
+				canvas.getContext('2d').drawImage(image, 0, 0)
+				return OCRAD(canvas)
+			}
+			
+			function OCRPath(url, callback){
+				var image = new Image()
+				image.src = url;
+				image.onload = function(){ callback(OCRImage(image)) }
+			}
+
+			function OCRFile(file, callback){
+				var reader = new FileReader();
+				reader.onload = function(){ OCRPath(reader.result, callback); }
+				reader.readAsDataURL(file)
+			}
+		</script>
+		Selectionner le fichier ocr.png pour l'ancer l'analyse:
+				<input type="file" onchange="OCRFile(this.files[0], function(text){document.getElementById('res').innerHTML = text})">
+	</body>	
+</html>
+
