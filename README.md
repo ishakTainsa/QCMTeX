@@ -1,4 +1,4 @@
-# QCMTeX Projet S3 - IUT Villetaneuse Paris XIII
+# QCMTeX Projet S3 - IUT Villetaneuse
 
   Un générateur de qcm en LaTeX avec correcteur automatique.
 
