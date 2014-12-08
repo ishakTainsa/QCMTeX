@@ -27,7 +27,7 @@ a venir ..
 #### Code de base:
 
     <?php
-        require_once 'TesseractOCR.php';
+        require_once 'ocr/TesseractOCR.php';
         $ocr = new TesseractOCR('image.png');
         $txt = $ocr->recognize();
         echo "Texte reconnu : " . $txt;
