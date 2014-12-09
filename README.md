@@ -1,4 +1,4 @@
-# QCMTeX Projet S3 - IUT Villetaneuse
+# QCMTeK Projet S3
 
   Un générateur de qcm en LaTeX avec correcteur automatique.
 
@@ -23,30 +23,14 @@ Pour tester l'installation, faire dans la cmd(relancé la console si ça marche 
         tesseract 3.02
 ### Pour Linux
 a venir ..
-## Tesseract en PHP
-#### Code de base:
-
-    <?php
-        require_once 'ocr/TesseractOCR.php';
-        $ocr = new TesseractOCR('image.png');
-        $txt = $ocr->recognize();
-        echo "Texte reconnu : " . $txt;
-    ?>
-#### Juste certains caractères:
-
-    <?php
-        $ocr->setWhiteList("ABCDEFGH...ect"); //uniquement les majuscules seront reconnus
-    ?>
-#### changer de langue(nécessite téléchargement des langues):
-
-    <?php
-        $ocr->setLanguage("fre"); //pour le français
-    ?>
-#### Modes de lecture:
-tapez `tesseract` dans le cmd pour voir les options :
+## Utiliser l'ocr en PHP
+##### Code de base:
+**Important :** il faut avoir le dossier **ocr** disponible sur **Github** et avoir installer l'ocr [**Tesseract**](https://github.com/Tauul/QCMTeX#instalation-de-locr-tesseract)
 
 
     <?php
-        $ocr->setPagesegMode("0");// de 0 jusqu'a 10
+        require_once 'ocr/Ocr.php';
+        $ocr = new Ocr();
+        echo $ocr->analyseScan('scan.png');
     ?>
 

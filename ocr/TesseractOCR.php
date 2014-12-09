@@ -70,9 +70,14 @@ class TesseractOCR
      *
      * @param string $image Path to the image to be recognized
      */
-    public function __construct($image)
+   /* public function __construct($image)
     {
         $this->image = $image;
+    }*/
+
+    public function __construct()
+    {
+        $this->image = null;
     }
 
     /**
@@ -95,7 +100,7 @@ class TesseractOCR
     */
     public function setPagesegMode($pagesegmode)
     {
-        $this->pagesegmode = $pagesegmode);
+        $this->pagesegmode = $pagesegmode;
         return $this;
     }
 
@@ -242,5 +247,16 @@ class TesseractOCR
             unlink($this->configFile);
         }
         unlink($this->outputFile);
+    }
+
+    /*
+        Rajout chris
+    */
+    public function getImage(){
+        return $this->image;
+    }
+
+    public function setImage($image){
+        $this->image = $image;
     }
 }
