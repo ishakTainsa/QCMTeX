@@ -31,7 +31,7 @@ voir exemple dans dossier`Test ocr`
     <?php
         require_once 'ocr/Ocr.php';
         $ocr = new Ocr();
-        echo $ocr->analyseScan('scan.png');
+        echo $ocr->scanToFile('scan.png');
     ?>
     
 ##### Modifier la puissance de l'ocr :
@@ -39,7 +39,7 @@ voir exemple dans dossier`Test ocr`
 **Important:** le temps de chargement augmantera en fonction.  
 
         <?php
-            $ocr->setPuissance(2)// la puissance de l'ocr va de 0 a 2 ne pas metre pour laissez par default
+            $ocr->setPuissance(2)// la puissance de l'ocr va de 0 a 2
         ?>
         
 ##### Modifier repertoire de sauvegarde des resultats :
