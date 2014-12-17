@@ -74,7 +74,6 @@
 			{
 				fputs($fichier_ecrit, numeroQCM($i));
 				fputs($fichier_ecrit, environnementQCM($nbQuestion, $aleatoire));
-				fputs ($fichier_ecrit, feuilleReponse());
 				
 				if ($i!=$nbQCM)
 					fputs ($fichier_ecrit, "\n\t\\newpage\n");
@@ -183,7 +182,7 @@
 					$str.="\n\n";
 				
 				if ($count==$nbQuestion)
-					return $str;
+					return $str.=feuilleReponse($nbQuestion);
 				else
 					$count++;
 			}
@@ -191,7 +190,7 @@
 	}
 
 	
-	function feuilleReponse()
+	function feuilleReponse($nbQuestion)
 	{
 		$str = "
 		\\end{enumerate}
@@ -201,11 +200,15 @@
 		\begin{center}
 			\begin{tabular}{cccccc}
 
-				Questions & 1 & 2 & 3 & 4 & 5\\\
-
-				1 & \ding{109} & \ding{109} & \ding{109} & \ding{109} & \ding{109} \\\
-
-				2 & \ding{109} & \ding{109} & \ding{109} & \ding{109} & \ding{109} \\\
+				Questions & 1 & 2 & 3 & 4 & 5\\\ ";
+		
+		for ($i=1; $i<=$nbQuestion; $i++)
+		{
+			$str.="
+				".$i." & \ding{109} & \ding{109} & \ding{109} & \ding{109} & \ding{109} \\\  ";
+		}
+		
+		$str.="
 
 			\\end{tabular}
 		\\end{center}
@@ -213,6 +216,25 @@
 	\\end{qcm}";
 	
 		return $str;
+	}
+	
+	function genereReponseJuste() //Génére un fichier de réponse juste pour les questions
+	{
+		$fichier_reponse = fopen($_COOKIE['fichier_reponse'], 'w');
+		if (!empty($_COOKIE['question']))
+		{
+			$question = unserialize($_COOKIE['question']);
+			if (!empty($_COOKIE['reponsejuste']))
+				$reponse_juste = unserialize($_COOKIE['reponsejuste']);
+			
+			foreach($question as $cle=>$quest)
+			{
+				fputs($fichier_reponse, "\n\n\t\t\question ".$question[$cle]);
+				foreach ($reponse_juste[$cle] as $resp)
+					fputs($fichier_reponse, "\n\t\t\t\\reponsejuste ".$resp);
+			}
+		}
+		fclose($fichier_reponse);
 	}
 	
 	function finDocument()

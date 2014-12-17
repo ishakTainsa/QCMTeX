@@ -9,9 +9,11 @@
 	{
 		$fichier_utilisateur = basename($_FILES['qcm']['name']);
 		$fichier_genere = "generation.tex";
+		$fichier_reponse = "fichier_reponse.tex";
 		$taille_max = 100000;
 		
 		setcookie('fichier_genere', $fichier_genere, time()+3600*24, NULL, NULL, FALSE, TRUE);
+		setcookie('fichier_reponse', $fichier_reponse, time()+3600*24, NULL, NULL, FALSE, TRUE);
 		
 		if (!preg_match('#^.*\.(tex)$#', (string)$_FILES['qcm']['name']))
 			$erreur = 'Vous devez uploader un fichier de type .tex !';
