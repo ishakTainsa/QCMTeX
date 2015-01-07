@@ -1,6 +1,7 @@
 body {
 	font-family: sans-serif;
-	background-color: #F4FBFF;
+	/*background-color: #F4FBFF;*/
+	background-color: #D9F3FD;
 }
 header,footer{
 	margin:auto;
@@ -10,13 +11,12 @@ header,footer{
 	padding-bottom: 10px;
 	color:#444454;
 }
-ul{
+ul li{
 	font-weight: 600
 }
 .content p {
 	text-align: justify;
 	font-weight: 600;
-	font-size: 90%
 }
 footer a {
 	text-decoration: none;
@@ -26,8 +26,12 @@ h1 {
 	font-weight: 600;
 	font-family: 'Actor', sans-serif;
 }
+h2{
+	text-align: center;
+	margin-bottom: 20px;
+}
 section{
-	width:900px;
+	width:920px;
 	margin: auto;
 	height:	auto;
 	min-height:700px;
@@ -39,10 +43,10 @@ section{
 	background: white;
 	height: auto;
 	line-height: 1.5em;
-	padding: 50px;
+	padding: 20px 100px 50px 100px;
 	border: 1px solid #bbb;
 	border-top: 0px;
-	border-radius: 5px; 
+	border-radius: 7px; 
 	border-top-left-radius: 0px; 
 	border-top-right-radius: 0px; 
 }
@@ -52,6 +56,7 @@ section{
 }
 #dragndrop{
 	width:550px;
+	padding: 70px;
 	height:350px;
 	background-color:#DEE8EB;
 	margin: auto;
@@ -61,6 +66,14 @@ section{
 	-webkit-box-shadow: 0px 0px 5px 0px #444457;
 	-o-box-shadow: 0px 0px 5px 0px #444457;
 	box-shadow: 0px 0px 5px 0px #444457;
+}
+
+.btn-perso{
+	background-color: #666676;
+	margin-top:30px;
+	color:white;
+	width: 100%;
+	height: 40px;
 }
 
 #pied_page{
