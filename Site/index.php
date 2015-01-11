@@ -19,6 +19,9 @@
 
 			})
 		</script>
+		<?php
+			require('fichiers_php/fonctions_generateur.php');
+		?>
 	</head>
 	<body>
 		<header>
