@@ -5,24 +5,20 @@
 	if (isset($_FILES['qcm']) && isset($_FILES['qcm']['name']) && trim($_FILES['qcm']['name'])!='')
 	{
 		$fichier_utilisateur = basename($_FILES['qcm']['name']);
-		$fichier_genere = "generation.tex";
-		$taille_max = 100000;
+		$fichier_genere = "fichier_genere.tex";
 		
 		setcookie('fichier_utilisateur', $fichier_utilisateur, time()+3600*24, NULL, NULL, FALSE, TRUE);
-		
+		setcookie('fichier_genere', $fichier_genere, time()+3600*24, NULL, NULL, FALSE, TRUE);
+
 		if(isTexFile($fichier_utilisateur)==false) {
 			$erreur = 'Vous devez uploader un fichier de type .tex !';
-		}
-		
-		elseif (filesize($_FILES['qcm']['tmp_name']) > $taille_max)
-			$erreur = 'Le fichier est trop gros !';
-		
+		}		
 
-		elseif(isQcm($fichier_utilisateur)==false) {
+		if(isQcm($fichier_utilisateur)==false) {
 			$erreur = 'Vous devez uploader un fichier avec un environnement QCM !';
 		}
 
-		elseif (!isset($erreur))
+		if (!isset($erreur))
 		{
 			if (move_uploaded_file($_FILES['qcm']['tmp_name'], $fichier_utilisateur)) //Création d'un fichier temporaire
 			{		
@@ -46,7 +42,7 @@
 									</select>
 								</div>
 								<label class="checkbox-inline">
-									<input type="checkbox" value="">Mode aléatoire des questions.
+									<input type="checkbox" name="aleatoire" value="">Mode aléatoire des questions.
 								</label>
 								<label class="checkbox-inline">
 									<input type="checkbox" value="">Option 2

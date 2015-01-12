@@ -4,13 +4,9 @@
 							Glisser et déposer vos fichiers TeX dans le cadre ci-dessous pour générer vos QCMs .Consultez la <a href="#documentation">documentation.</a>pour d'avantage d'informations
 
 						</p>
-						
-						<!--<form action="yolo/traitement.php" class="dropzone" id="my-awesome-dropzone">
-						</form>-->
       					
 						<div id="dragndrop">
 							<form action ="traitementQCM.php" method="post" enctype="multipart/form-data">
-								
 								<div class="form-group">
 									<input type="file" name="qcm"/>
 									<input type="submit" class="btn-perso btn btn-primary" value="Générer">
