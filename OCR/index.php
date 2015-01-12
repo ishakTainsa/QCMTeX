@@ -10,14 +10,16 @@
                 if(isset($_FILES['img'])){
                     require_once 'Correcteur.php';
                     $correcteur = new Correcteur('fichierRep.corr');
-                    $correcteur->scan($_FILES['img']['name']);
-                    //echo $correcteur->getNumQcm()."<br>";
-                    foreach ($correcteur->getGrille() as $key => $value) {
-                        foreach($value as $key2 =>$value2)
-                            echo $value2;
-                        echo "<br>";
+                    if($correcteur->scan($_FILES['img']['name'])){
+                        foreach($correcteur->getGrille() as $key => $value) {
+                            foreach($value as $key2 =>$value2)
+                                echo $value2;
+                            echo "<br>";
+                        }
+                        echo '<br>note : '.$correcteur->note(20,0.5);
                     }
-                    echo '<br>note : '.$correcteur->note(null,0.5);
+                    else
+                        echo 'erreur';
                     $timeend=microtime(true);
                     $time=$timeend-$timestart;
                     $page_load_time = number_format($time, 3);

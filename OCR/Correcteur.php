@@ -22,11 +22,18 @@
 			$this->scanOcr(); // apres les traitement scan de l'ocr
 			$this->fileOcr = fopen($this->repertoire.$this->image.'.txt', 'r' );
 			$retour = false;
-			/*if($this->extractNumQcm() && $this->extractGrille()) // retirer en attendant de reconnaitre le numéro du qcm
+			$this->extractNumQcm();//  a enlever quand le probleme du dessous sera resolu 
+			if(/*$this->extractNumQcm() &&*/ $this->extractGrille())
 				$retour = true;
-				*/
-			$this->extractNumQcm();//  a enlever quand le probleme du 
-			$this->extractGrille();//   desus sera resolu
+			else{
+				fclose($this->fileOcr);
+				$this->traitementSurImage(true);
+				$this->scanOcr();
+				$this->fileOcr = fopen($this->repertoire.$this->image.'.txt', 'r' );
+				$this->extractNumQcm(); //  a enlever quand le probleme du dessous sera resolu 
+				if(/*$this->extractNumQcm() &&*/$this->extractGrille())
+					$retour = true;
+			}
             fclose($this->fileOcr);
             unlink($this->repertoire.$this->image.'.txt');
             return $retour;
@@ -44,8 +51,7 @@
         	$ligne = fgets($this->fileOcr);
 			$this->numQcm = 0;
 			if(preg_match('#([0-9]+)#', $ligne,$retour)){
-		       		$this->numQcm = $retour[0]-1;
-		       		print_r($retour);
+		       		//$this->numQcm = $retour[0]-1;
 		       		return true;
 		    }
 		    else
@@ -93,9 +99,8 @@
 				}
 				else if(trim($ligne) == '')
 			    	return true;          	
-				else{
+				else
 					return false;
-				}
 			}
 			return true;
 		} 
@@ -117,8 +122,9 @@
 		}
 
 		private function traitementSurImage($test){
-			exec('convert '.$this->image.' -threshold  70% Imagetraitee_'.$this->image);
-			if($test){// traitement d'image a faire seulement dans le cas ou l'image ne serait pas reconnu au premier abord
+			if(!$test)
+				exec('convert '.$this->image.' -threshold  70% Imagetraitee_'.$this->image);
+			else{// traitement d'image a faire seulement dans le cas ou l'image ne serait pas reconnu au premier abord
 				exec('convert Imagetraitee_'.$this->image.' -morphology smooth square Imagetraitee_'.$this->image);
 				exec('convert Imagetraitee_'.$this->image.' -morphology erode square:3 Imagetraitee_'.$this->image);
 				exec('convert Imagetraitee_'.$this->image.' -morphology dilate square:3 Imagetraitee_'.$this->image);
