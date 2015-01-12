@@ -6,10 +6,24 @@
     <body>
         <p>
             <?php
+                $timestart=microtime(true);
                 if(isset($_FILES['img'])){
-                    require_once 'Ocr.php';
-                    $ocr = new Ocr();
-                    $ocr->scan($_FILES['img']['name']);
+                    require_once 'Correcteur.php';
+                    $correcteur = new Correcteur('fichierRep.corr');
+                    $correcteur->scan($_FILES['img']['name']);
+                    //echo $correcteur->getNumQcm()."<br>";
+                    foreach ($correcteur->getGrille() as $key => $value) {
+                        foreach($value as $key2 =>$value2)
+                            echo $value2;
+                        echo "<br>";
+                    }
+                    echo '<br>note : '.$correcteur->note();
+                    $timeend=microtime(true);
+                    $time=$timeend-$timestart;
+                    $page_load_time = number_format($time, 3);
+                    echo "<br>Debut du script: ".date("H:i:s", $timestart);
+                    echo "<br>Fin du script: ".date("H:i:s", $timeend);
+                    echo "<br>Script execute en " . $page_load_time . " sec";
                 }
                 else{
                     ?>
@@ -21,6 +35,7 @@
                         </form>
                     <?php
                 }
+
             ?>
         </p>
     </body>

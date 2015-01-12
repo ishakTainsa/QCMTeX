@@ -267,6 +267,14 @@
 		
 		return $texFileResultat;
 	}
+
+	function genererFichierCorrection($tabQuestionsReponses){
+		$fichierCorrection = fopen('fichier_genere.tex', 'w');
+
+		fclose($texFileResultat);
+		
+		return $texFileResultat;
+	}
 	
 
 //**************************************************************************************************************************************************/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\	
