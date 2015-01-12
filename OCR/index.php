@@ -17,7 +17,7 @@
                             echo $value2;
                         echo "<br>";
                     }
-                    echo '<br>note : '.$correcteur->note();
+                    echo '<br>note : '.$correcteur->note(null,0.5);
                     $timeend=microtime(true);
                     $time=$timeend-$timestart;
                     $page_load_time = number_format($time, 3);

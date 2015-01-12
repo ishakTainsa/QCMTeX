@@ -52,16 +52,16 @@
 		    	return false;
         }
 
-        public function note(){
+        public function note($denominateur,$erreur){
         	$f = fopen($this->fileCor, 'r');
 			$tab = unserialize(fgets($f));
 			fclose($f);
 			$tab = $tab[$this->numQcm];
 			$numQuestion = $this->getNumQuestion();
+			$note = 0;
 			if($tab == $this->grille)
-				return $numQuestion.'/'.$numQuestion;
+				$note = $numQuestion;
 			else{
-				$note = 0;
 				for ($question=0; $question < $numQuestion; $question++) { 
 					if($tab[$question] == $this->grille[$question]) // si les réponses a la question sont juste
 						$note++;
@@ -72,11 +72,14 @@
 								$test = false;
 						}
 						if(!$test)// si les cases ne sont pas laisser vide
-							$note--;
+							$note-=$erreur;
 					}
 				}
-				return $note.'/'.$numQuestion;
 			}
+			if($denominateur == null)
+				$denominateur = $numQuestion;
+			$note = round($note/$numQuestion*$denominateur,2);
+			return $note.'/'.$denominateur;
         }
 
         private function extractGrille(){
