@@ -1,68 +1,62 @@
-<!doctype html>
-<html>
-	<head>
-		<title>QCMTeX</title>
-		<meta charset="utf8">
-		<link href='http://fonts.googleapis.com/css?family=Actor' rel='stylesheet' type='text/css'>
-		<link href='dist/css/bootstrap.css' rel='stylesheet' type='text/css'>
-		<link href='dist/css/style.css' rel='stylesheet' type='text/css'>
-		<link href="dist/css/dropzone.css" type="text/css" rel="stylesheet">
-		<script src="dist/js/jquery.min.js"></script>
-		<script src="dist/js/bootstrap.min.js"></script>
-		<script src="dist/js/dropzone.min.js"></script>
-		<script type="text/javascript">
-			$(function() {
-				var myDropzone = new Dropzone("#my-awesome-dropzone");
-				myDropzone.on("addedfile", function(file) {
-				alert("succes");
-			});
+<?php
+	include 'fichiers/entete.php';
+	include('fichiers/fonctions.php');
+?>
+						<h2>Génération</h2>
+						<p>
+							Pour générer vos QCMs vous devez préalablement utiliser <a href="">le package TeX, QCMTeX </a> .
+							Glisser et déposer vos fichiers TeX dans le cadre ci-dessous pour générer vos QCMs .Consultez la <a href="#documentation">documentation.</a>pour d'avantage d'informations
 
-			})
-		</script>
-	</head>
-	<body>
-		<header>
-			<h1>QCMTeX</h1>
-		</header>
-		<section>
-			<div role="tabpanel">
-				<ul class="nav nav-tabs" role="tablist" id="myTab">
-					<li role="presentation" class="active"><a href="#generer"  aria-controls="generer" data-toggle="tab">Générer</a></li>
-					<li role="presentation"><a href="#corriger"  aria-controls="corriger" data-toggle="tab">Corriger</a></li>
-					<li role="presentation" class="dropdown">
-						<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
-							Documentation <span class="caret"></span>
-					</a>
-					<ul class="dropdown-menu" role="menu">
-						<li role="presentation"><a href="#documentation"> Liens 1</a></li>
-						<li role="presentation"><a href="#documentation"> Liens 2</a></li>
-						<li role="presentation"><a href="#documentation"> Liens 3</a></li>
-					</ul>
-					</li>
-				</ul>
-				<div class="tab-content">	
-					<div role="tabpanel" class="content tab-pane fade in active" id="generer">
-						<?php include"fichiers_php/pages/Page_generer.php" ?>
-					</div>
-					<div role="tabpanel" class="content tab-pane fade" id="corriger">
-						<?php include"fichiers_php/pages/page_corriger.php" ?>
-					</div>
-					<div role="tabpanel" class="content tab-pane fade" id="documentation">
-						<?php include"fichiers_php/pages/page_documentation.php" ?>
-					</div>
-				</div>
-			</div>	
-		</section>
-		<footer>
-			<p><span id="pied_page">QCMTeX - Projet de S3 du groupe E17. <a target="_blank" href="https://github.com/Tauul/QCMTeX">Voir GitHub</a></span></p>
-		</footer>
-		<script type="text/javascript">
-			$(document).ready(function(){ 
-				$("#myTab a").click(function(e){
-					e.preventDefault();
-					$(this).tab('show');
-				});
-			});
-		</script>
-	</body>
-</html>
+						</p>
+							<div id="cadre">
+								<?php
+								$test = true;
+								if(isset($_FILES['nom'])){
+									$test = false;
+								    $dossier = '';
+								    $fichier = basename($_FILES['nom']['name']);
+								    if(!move_uploaded_file($_FILES['nom']['tmp_name'], $dossier . $fichier))
+								        echo 'Echec de l\'upload !'; 
+								    if(isset($_POST['nbQCM'])){	
+										if(isTexFile($_FILES['nom']['name']))
+											$tableauQR=extractQcm($dossier.$fichier);
+										if(isQcm($dossier.$fichier)){
+											$nbrQcmVoulu=$_POST['nbQCM'];
+											$tabQRM=genererTabQuestionReponses($tableauQR, $nbrQcmVoulu);
+											if(isset($_POST['typeQ']))
+												$tabRes=genererTexFileResultat($tabQRM,$_POST['typeQ']);
+											echo '<a href="fichier_genere.tex">SUJETS</a>';
+										}
+										else{
+											$test = true;
+											echo "Une erreur est survenue avec votre fichier.Vérifier que :<br>L'extension du fichier est bien '.tex'<br>L'environement qcm est bien présent voir documentation";
+										}		
+									}
+									else
+										$test = true;
+								}
+								if($test){
+									?>
+									<form method="post" class="form-horizontal" action="#" enctype="multipart/form-data">
+										<div class="form-group">
+											<label>Fichier Tex</label>
+											<input type="file" name="nom" />
+										</div>
+										<div class="form-group">
+									        <label>Nombre de QCMs à générer</label>
+									        <input type="number" value="1" class="form-control" name="nbQCM"></p>
+									    </div>
+									    <div class="form-group">
+									    	<label>Layout des QCMs :</label><br>
+									    	<input type="radio" name="typeQ" value="liste" checked>Liste
+											<input type="radio" name="typeQ" value="colonne">Colonne
+										</div>
+										<input type="submit" class="btn-perso btn btn-primary" value="Générer"/>
+									</form>
+									<?php 
+								}
+								?>
+							</div>
+<?php
+	include 'fichiers/pied.php';
+?>

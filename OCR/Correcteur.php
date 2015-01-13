@@ -6,13 +6,40 @@
 		private $image;
 		private $fileOcr;
 		private $fileCor;
-		private $scanMode;
-		private $langue;
 		private $grille;
 		private $numQcm;
+		private $filePdf;
+		private $nombreDeQcm;
 
-		public function __construct ($fileCor){
+		public function __construct ($fileCor,$filePdf){
 			$this->fileCor = $fileCor;
+			$this->filePdf = $filePdf;
+			$this->nombreDeQcm = exec('identify -format %n '.$this->filePdf);
+		}
+
+		public function isPdf($file){
+			$fichier = new SplFileInfo($file);
+			$extension = pathinfo($fichier->getFilename(), PATHINFO_EXTENSION);
+			if($extension != 'pdf')
+				return false;
+			else
+				return true;
+		}
+
+		public function correction(){
+			exec('convert -density 250x250 '.$this->filePdf.' qcm.jpg');
+			for ($i=0; $i < $this->nombreDeQcm; $i++) { 
+				$fichier = '';
+				if($this->nombreDeQcm <= 1)
+					$fichier = 'qcm.jpg';
+				else
+					$fichier = 'qcm-'.$i.'.jpg';
+				if($this->scan($fichier))
+					$retour[$this->numQcm+$i] = $this->note(null,1);
+				else
+					$retour[$this->numQcm+$i] = 'erreur';
+			}
+			return $retour;
 		}
 
 		public function scan($scan){
@@ -123,16 +150,16 @@
 
 		private function traitementSurImage($test){
 			if(!$test)
-				exec('convert '.$this->image.' -threshold  70% Imagetraitee_'.$this->image);
+				exec('convert '.$this->image.' -threshold  70% '.$this->image);
 			else{// traitement d'image a faire seulement dans le cas ou l'image ne serait pas reconnu au premier abord
-				exec('convert Imagetraitee_'.$this->image.' -morphology smooth square Imagetraitee_'.$this->image);
-				exec('convert Imagetraitee_'.$this->image.' -morphology erode square:3 Imagetraitee_'.$this->image);
-				exec('convert Imagetraitee_'.$this->image.' -morphology dilate square:3 Imagetraitee_'.$this->image);
+				exec('convert '.$this->image.' -morphology smooth square '.$this->image);
+				exec('convert '.$this->image.' -morphology erode square:3 '.$this->image);
+				exec('convert '.$this->image.' -morphology dilate square:3 '.$this->image);
 			}
 		}
 
 		private function scanOcr(){ // utilisation de l'ocr
-			exec('tesseract Imagetraitee_'.$this->image.' -l qcmtex -psm 6 '.$this->image);
+			exec('tesseract '.$this->image.' -l qcmtex -psm 6 '.$this->image);
 		}
 
 		public function setRepertoire($rep){

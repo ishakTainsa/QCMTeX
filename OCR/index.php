@@ -8,22 +8,14 @@
             <?php
                 $timestart=microtime(true);
                 if(isset($_FILES['img'])){
+                    set_time_limit (60*60*24);
                     require_once 'Correcteur.php';
-                    $correcteur = new Correcteur('fichierRep.corr');
-                    if($correcteur->scan($_FILES['img']['name'])){
-                        foreach($correcteur->getGrille() as $key => $value) {
-                            foreach($value as $key2 =>$value2)
-                                echo $value2;
-                            echo "<br>";
-                        }
-                        echo '<br>note : '.$correcteur->note(20,0.5);
-                    }
-                    else
-                        echo 'erreur';
+                    $correcteur = new Correcteur('fichierRep.corr',$_FILES['img']['name']);
+                    print_r($correcteur->correction());
                     $timeend=microtime(true);
                     $time=$timeend-$timestart;
                     $page_load_time = number_format($time, 3);
-                    echo "<br>Debut du script: ".date("H:i:s", $timestart);
+                    echo "<br><br>Debut du script: ".date("H:i:s", $timestart);
                     echo "<br>Fin du script: ".date("H:i:s", $timeend);
                     echo "<br>Script execute en " . $page_load_time . " sec";
                 }
