@@ -36,6 +36,9 @@ section{
 	height:	auto;
 	min-height:700px;
 }
+th{background-color: #585868;color:white;}
+td{background-color: white;}
+
 
 .content {
 	font-family: sans-serif;
@@ -43,7 +46,7 @@ section{
 	background: white;
 	height: auto;
 	line-height: 1.5em;
-	padding: 20px 100px 50px 100px;
+	padding: 20px 100px 20px 100px;
 	border: 1px solid #bbb;
 	border-top: 0px;
 	border-radius: 7px; 
@@ -54,27 +57,14 @@ section{
 	background: rgb(56, 56, 56);
 	color: white;
 }
-#dragndrop{
-	width:550px;
-	padding: 70px;
-	height:350px;
-	background-color:#DEE8EB;
-	margin: auto;
-	margin-top: 50px;
-	margin-bottom: 50px;
-	-moz-box-shadow: 0px 0px 5px 0px #444457;
-	-webkit-box-shadow: 0px 0px 5px 0px #444457;
-	-o-box-shadow: 0px 0px 5px 0px #444457;
-	box-shadow: 0px 0px 5px 0px #444457;
-}
 #cadre{
 	width:650px;
-	padding: 70px 100px 70px 100px;
+	padding: 70px;
 	height:auto;
 	background-color:rgba(217,243,253,0.2);
 	margin: auto;
-	margin-top: 50px;
-	margin-bottom: 50px;
+	margin-top: 40px;
+	margin-bottom: 30px;
 	-moz-box-shadow: 0px 0px 5px 0px #444457;
 	-webkit-box-shadow: 0px 0px 5px 0px #444457;
 	-o-box-shadow: 0px 0px 5px 0px #444457;
@@ -83,7 +73,7 @@ section{
 
 .btn-perso{
 	background-color: #666676;
-	margin-top:30px;
+	margin-top:10px;
 	color:white;
 	width: 100%;
 	height: 40px;

@@ -244,7 +244,7 @@
 	 * @return File $texFileResultat Le fichier Qcm proposé à l'utilisateur.
 	 */
 	function genererTexFileResultat($tabQuestionsReponses,$typeQ){
-		$texFileResultat = fopen('fichier_genere.tex', 'w');
+		$texFileResultat = fopen('ddl/fichier_genere.tex', 'w');
 		fputs ($texFileResultat, debutDocument(11)); // Susceptible de changer car on pourrait récuperer les packages directement à partir du fichier ..
 		
 		for ($i=0; $i<count($tabQuestionsReponses); $i++)

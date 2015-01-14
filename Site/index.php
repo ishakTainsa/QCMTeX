@@ -13,10 +13,10 @@
 								$test = true;
 								if(isset($_FILES['nom'])){
 									$test = false;
-								    $dossier = '';
+								    $dossier = 'upload/';
 								    $fichier = basename($_FILES['nom']['name']);
 								    if(!move_uploaded_file($_FILES['nom']['tmp_name'], $dossier . $fichier))
-								        echo 'Echec de l\'upload !'; 
+											echo '<div class="alert alert-danger" role="alert"><strong>Erreur!</strong> un problème est survenue lors du téléchargement de votre fichier</div>';
 								    if(isset($_POST['nbQCM'])){	
 										if(isTexFile($_FILES['nom']['name']))
 											$tableauQR=extractQcm($dossier.$fichier);
@@ -25,11 +25,11 @@
 											$tabQRM=genererTabQuestionReponses($tableauQR, $nbrQcmVoulu);
 											if(isset($_POST['typeQ']))
 												$tabRes=genererTexFileResultat($tabQRM,$_POST['typeQ']);
-											echo '<a href="fichier_genere.tex">SUJETS</a>';
+											echo '<a href="ddl/fichier_genere.tex">SUJETS</a>';
 										}
 										else{
 											$test = true;
-											echo "Une erreur est survenue avec votre fichier.Vérifier que :<br>L'extension du fichier est bien '.tex'<br>L'environement qcm est bien présent voir documentation";
+											echo '<div class="alert alert-danger" role="alert"><strong>Attention!</strong> une erreur est survenue avec votre fichier.Vérifier que l\'extension du fichier est bien <strong>\'.tex\'</strong> et que <strong>l\'environement qcm</strong> est bien présent</div>';
 										}		
 									}
 									else
@@ -47,9 +47,19 @@
 									        <input type="number" value="1" class="form-control" name="nbQCM"></p>
 									    </div>
 									    <div class="form-group">
+									        <label>Nombre de questions par QCM</label>
+									        <input type="number" value="1" class="form-control" name="nbQ"></p>
+									    </div>
+									    <div class="form-group">
 									    	<label>Layout des QCMs :</label><br>
-									    	<input type="radio" name="typeQ" value="liste" checked>Liste
-											<input type="radio" name="typeQ" value="colonne">Colonne
+									    	<div class="radio">
+									    		<label>
+									    			<input type="radio" name="typeQ" value="liste" checked> Liste
+									    		</label>
+									    		<label>
+													<input type="radio" name="typeQ" value="colonne"> Colonne
+												</label>
+											</div>
 										</div>
 										<input type="submit" class="btn-perso btn btn-primary" value="Générer"/>
 									</form>
