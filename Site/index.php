@@ -28,11 +28,9 @@ session_start();
 												$nbrQcmVoulu = $_POST['nbQCM'];
 												$tabQRM = genererTabQuestionReponses($tableauQR,$nbrQcmVoulu);
 												$tab = nbQPQCM($tabQRM,$_POST["nbQ"]);
-												genererGrilleRep($tab,$_POST['typeR']);
-												$tabMain = genererCorrige($tab);
-												correctMain($tabMain);
-												if(isset($_POST['typeQ']))
-													genererTexFileResultat($tab,$_POST['typeQ'],$_POST['typeR'],$dossier.$fichier);
+												genererCorrectionMain(genererCorrectionAutomatique($tab));
+												genererTexFileGrilleDeReponse($tab,$_POST['typeR']);
+												genererTexFileResultat($tab,$_POST['typeQ'],$_POST['typeR'],$dossier.$fichier);
 												echo '<p><a href="ddl/fichier_genere.tex">Sujets en LaTeX</a></p>';
 												echo '<p><a href="ddl/grilleRep.tex">Grilles de réponse en LaTeX</a></p>';
 												echo '<p><a href="fichiers/genereFichierCorr.php">Fichier de correction automatique</a></p>';

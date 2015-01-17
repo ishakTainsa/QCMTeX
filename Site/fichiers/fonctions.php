@@ -1,15 +1,5 @@
-<html>
-<head>
-	<meta charset="UTF-8"/>
-</head>
-<body>
 <?php
-/*
-		Recuperer Tête et queue
-		grille de réponse pour le prof
-		grille de réponse pour les élèves
-		OCR()
-*/
+
 
 /*** Variables ****
 	
@@ -23,19 +13,7 @@
 
 *******************
 	
-	/** Vérifie l'extension d'un fichier
-	 * @param File $texFile variable représentant le fichier tex uploader par le formulaire
-	 * @return boolean true si l'extension est de type .tex, false sinon
-	 */
-	function isTexFile($texFile){
-		$fichier= new SplFileInfo($texFile);
-		$extension = pathinfo($fichier->getFilename(), PATHINFO_EXTENSION);
-		
-		if($extension != 'tex')
-			return false;
-		else
-			return true;
-	}
+	
 	
 	
 	/** Extrait le qcm.
@@ -109,42 +87,8 @@
 		
 		return $nbQcm;
 	}
+
 	
-
-	 
-
-/*******************************/ //fonctions ajoutés par Adel LE 18/12/2014
-
-	function voirLesDerniersSujets(){ //On verra plus tard 
-
-	}
-	
-	
-	/** Verifie si le fichier tex contient l'environnement QCM.
-	 * @param File $texFile variable représentant le fichier tex uploader par le formulaire.
-	 * @return boolean true si le fichier contient un environnement qcm, false sinon.
-	 */
-	function isQcm($texFile){
-		$fichier = new SplFileInfo($texFile);
-		$debutQcm = false;
-		
-		if ($fichier->isReadable())
-		{
-			$fichier_lu = $fichier->openFile('r');
-			while (!$fichier_lu->eof()) //Lecture du fichier ligne par ligne
-			{
-				$ligne = $fichier_lu->current();
-				if (!$debutQcm && preg_match('#\\\\begin{qcm}#', $ligne))
-					$debutQcm = true;
-						
-				if ( $debutQcm && preg_match('#\\\\end{qcm}#', $ligne))
-					return true;
-				
-				$fichier_lu->next();
-			}
-		}
-		return false;
- 	}
 
 //**************************************************************************************************************************************************/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
@@ -185,7 +129,6 @@
 		for ($i=0; $i<$nbrQcmVoulu; $i++) {
 			$tabQuestionsReponses[$i] = melange($questionsReponses, $i);
 		}
-		
 		return $tabQuestionsReponses;
 	}
 
@@ -217,92 +160,6 @@
 		
 		return $texFileResultat;
 	}
-	
-	function genererCorrige($tabQuestionsReponses){
-			/*parcourir tout le tableau
-					je crée un arrayCorrige
-					pour chaque QCM faire:
-						je crée un arrayQCM 
-						je parcour les question:
-								je parcour les réponses
-									je crée un array
-									je lis les clés des questions
-									si clés  preg "rep" 
-										ajouter case noire à array
-									si non
-										ajouter case blanche à array
-								j'ajoute l'array à l'arrayQCM	
-						j'ajoue l'arrayCorrige à
-			
-			*/
-		$tabFinal= array();
-		for($i=0;$i<count($tabQuestionsReponses);$i++){
-			$qcm= array();
-			foreach($tabQuestionsReponses[$i] as $tabQR){
-				$q=array();
-				foreach($tabQR['Reponses'] as $rep => $val){
-					if(preg_match("#rep#",$rep)){
-						$q[]='■';
-					}
-					else{
-						$q[]='□';
-					}
-				}
-				$qcm[]=$q;
-			}
-			$tabFinal[]=$qcm;
-		}
-		$fichierRep = serialize($tabFinal);
-		$_SESSION['corrige'] = $fichierRep;
-		return $tabFinal;
-	
-	}
-
-	function genererGrilleRep($tabQuestionsReponses,$numerotation){
-		$texFileResultat = fopen('ddl/grilleRep.tex', 'w');
-		$debut = '\documentclass[a4paper]{article}'."\n".'\pagestyle{empty}'."\n".'\usepackage[17pt]{extsizes}'."\n".'\usepackage[francais]{babel}'."\n".'\usepackage[latin1]{inputenc}'."\n".'\usepackage[T1]{fontenc}'."\n".'\usepackage[top=2cm, bottom=2cm, left=2cm, right=2cm]{geometry}'."\n".'\usepackage{amsmath}'."\n".'\usepackage{MnSymbol}'."\n".'\usepackage{wasysym}'."\n".'\begin{document}';
-		fputs($texFileResultat, $debut);
-		foreach ($tabQuestionsReponses as $numQcms => $qcm) {
-			$str ="\n\t".'\begin{center}'."\n\t\t".'qcm '.($numQcms+1)."\n\t".'\end{center}'."\n";
-			fputs($texFileResultat,$str);
-			$contenu = '';
-			$MaxNbrQ = 0;
-			$numQ = 1;
-			$type = 0;
-			if ($numerotation == 'chiffre')
-				$type = '1';
-			else if ($numerotation == 'lettre')
-				$type = 'a';
-			foreach ($qcm as $question) {
-				$nbrQ = 0;
-				$contenu .="\n\t\t\t".$numQ.' . ';
-				foreach ($question['Reponses'] as $reponses){
-					$contenu .= '&$\square$';
-				}
-				$nbrQ = count($question['Reponses']);
-				if($nbrQ > $MaxNbrQ)
-					$MaxNbrQ = $nbrQ;
-				$contenu .='\\\\';
-				$numQ++;
-			}
-			$str = "\t".'nom :\\\\'."\n\t".'prenom :\\\\'."\n\t".'groupe :'."\n\t".'\begin{center}'."\n\t\t".'\begin{tabular}{*{'.($MaxNbrQ+1).'}{c}}';
-			fputs($texFileResultat,$str);
-			$str = "\n\t\t\t";
-			for($i = 0;$i<$MaxNbrQ;$i++){
-				$str .= '&'.$type;
-				$type++;
-			}
-			fputs($texFileResultat,$str.'\\\\');
-			fputs($texFileResultat,$contenu);
-			$str = "\n\t\t".'\end{tabular}'."\n\t".'\end{center}'."\n\t".'\\newpage';
-			fputs($texFileResultat,$str);
-		}
-		$fin ="\n".'\end{document}';
-		fputs($texFileResultat,$fin);
-		fclose($texFileResultat);
-	}
-
-	
 
 //**************************************************************************************************************************************************/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\	
 	/*** Autres fonctions utiles ***/
@@ -404,13 +261,111 @@
 		
 		return $tabres;
 	}
+/******    Generation de fichiers      ********/
+
+
+	function genererTexFileGrilleDeReponse($tabQuestionsReponses,$numerotation){
+		$texFileResultat = fopen('ddl/grilleRep.tex', 'w');
+		$debut = '\documentclass[a4paper]{article}'."\n".'\pagestyle{empty}'."\n".'\usepackage[17pt]{extsizes}'."\n".'\usepackage[francais]{babel}'."\n".'\usepackage[latin1]{inputenc}'."\n".'\usepackage[T1]{fontenc}'."\n".'\usepackage[top=2cm, bottom=2cm, left=2cm, right=2cm]{geometry}'."\n".'\usepackage{amsmath}'."\n".'\usepackage{MnSymbol}'."\n".'\usepackage{wasysym}'."\n".'\begin{document}';
+		fputs($texFileResultat, $debut);
+		foreach ($tabQuestionsReponses as $numQcms => $qcm) {
+			$str ="\n\t".'\begin{center}'."\n\t\t".'qcm '.($numQcms+1)."\n\t".'\end{center}'."\n";
+			fputs($texFileResultat,$str);
+			$contenu = '';
+			$MaxNbrQ = 0;
+			$numQ = 1;
+			$type = 0;
+			if ($numerotation == 'chiffre')
+				$type = '1';
+			else if ($numerotation == 'lettre')
+				$type = 'a';
+			foreach ($qcm as $question) {
+				$nbrQ = 0;
+				$contenu .="\n\t\t\t".$numQ.' . ';
+				foreach ($question['Reponses'] as $reponses){
+					$contenu .= '&$\square$';
+				}
+				$nbrQ = count($question['Reponses']);
+				if($nbrQ > $MaxNbrQ)
+					$MaxNbrQ = $nbrQ;
+				$contenu .='\\\\';
+				$numQ++;
+			}
+			$str = "\t".'nom :\\\\'."\n\t".'prenom :\\\\'."\n\t".'groupe :'."\n\t".'\begin{center}'."\n\t\t".'\begin{tabular}{*{'.($MaxNbrQ+1).'}{c}}';
+			fputs($texFileResultat,$str);
+			$str = "\n\t\t\t";
+			for($i = 0;$i<$MaxNbrQ;$i++){
+				$str .= '&'.$type;
+				$type++;
+			}
+			fputs($texFileResultat,$str.'\\\\');
+			fputs($texFileResultat,$contenu);
+			$str = "\n\t\t".'\end{tabular}'."\n\t".'\end{center}'."\n\t".'\\newpage';
+			fputs($texFileResultat,$str);
+		}
+		$fin ="\n".'\end{document}';
+		fputs($texFileResultat,$fin);
+		fclose($texFileResultat);
+	}
+
+	/* genererCorrectionAutomatique($tabQuestionReponses)
+	 *
+	 * @param Array $tabQuestionReponse
+	 * Genere un fichier .corr pour pouvoir effectuer une correction automatique ultérieurement
+	 * @return null
+	 */
+	function genererCorrectionAutomatique($tabQuestionsReponses){
+			/*parcourir tout le tableau
+					je crée un arrayCorrige
+					pour chaque QCM faire:
+						je crée un arrayQCM 
+						je parcour les question:
+								je parcour les réponses
+									je crée un array
+									je lis les clés des questions
+									si clés  preg "rep" 
+										ajouter case noire à array
+									si non
+										ajouter case blanche à array
+								j'ajoute l'array à l'arrayQCM	
+						j'ajoue l'arrayCorrige à
+			
+			*/
+		$tabCorrection = array();
+		for($i=0;$i<count($tabQuestionsReponses);$i++){
+			$qcm = array();
+			foreach($tabQuestionsReponses[$i] as $tabQR){
+				$q = array();
+				foreach($tabQR['Reponses'] as $rep => $val){
+					if(preg_match("#rep#",$rep)){
+						$q[]='■';
+					}
+					else{
+						$q[]='□';
+					}
+				}
+				$qcm[]=$q;
+			}
+			$tabCorrection[]=$qcm;
+		}
+		$fichierRep = serialize($tabCorrection);
+		$_SESSION['corrige'] = $fichierRep;
+		return $tabCorrection;
 	
-	function correctMain($tabQCM){
+	}
+
+	/* genererCorrectionMain($tabQcm)
+	 *
+	 * @param Array $tabCorrection Un tableau comportant les carrés vide et pleins correspondant a la correction des grilles de réponse
+	 * Genere un fichier .doc pour pouvoir effectuer une correction manuelle des Qcms.
+	 * @return null
+	 */
+	function genererCorrectionMain($tabCorrection){
 		$File = fopen('ddl/fichier_corr_hand.doc', 'w');
-		for($i=0;$i<count($tabQCM);$i++){
+		for($i=0;$i<count($tabCorrection);$i++){
 			$str="";
 			$str.="QCM".($i+1)."\r\n \r\n";
-			foreach($tabQCM[$i] as $tab){
+			foreach($tabCorrection[$i] as $tab){
 				$ligne="";
 				foreach($tab as $cle => $rep){
 					$ligne=$ligne."\t".$rep;
@@ -422,10 +377,91 @@
 		fclose($File);
 	}
 	
-	/* Fin du doccument proposé à l'utilisateur.
-	 * @return String $str 
+/******    Autres      ********/
+	
+	/* isPdfFile($pdfFile)
+	 *
+	 * @param File $pdfFile variable représentant le fichier pdf uploader par le formulaire
+	 * Vérifie si l'extension du fichier est bien ".pdf"
+	 * @return boolean true si l'extension est de type .pdf, false sinon
 	 */
+	function isPdfFile($pdfFile){
+		$fichier= new SplFileInfo($pdfFile);
+		$extension = pathinfo($fichier->getFilename(), PATHINFO_EXTENSION);
+			
+		if($extension != 'pdf')
+			return false;
+		else
+			return true;
+	}
 
+	/* isCorrFile($corrFile)
+	 *
+	 * @param File $corrFile variable représentant le fichier corr uploader par le formulaire
+	 * Vérifie si l'extension du fichier est bien ".corr"
+	 * @return boolean true si l'extension est de type .corr, false sinon
+	 */
+	function isCorrFile($corrFile){
+		$fichier= new SplFileInfo($corrFile);
+		$extension = pathinfo($fichier->getFilename(), PATHINFO_EXTENSION);
+			
+		if($extension != 'corr')
+			return false;
+		else
+			return true;
+	}
+
+	/* isTexFile($texFile)
+	 *
+	 * @param File $texFile variable représentant le fichier tex uploader par le formulaire
+	 * Vérifie si l'extension du fichier est bien ".tex"
+	 * @return boolean true si l'extension est de type .tex, false sinon
+	 */
+	function isTexFile($texFile){
+		$fichier= new SplFileInfo($texFile);
+		$extension = pathinfo($fichier->getFilename(), PATHINFO_EXTENSION);
+		
+		if($extension != 'tex')
+			return false;
+		else
+			return true;
+	}
+
+	/* isQcm($texFile)
+	 *
+	 * @param File $texFile variable représentant le fichier tex uploader par le formulaire.
+	 * Verifie si le fichier tex contient l'environnement QCM.
+	 * @return boolean true si le fichier contient un environnement qcm, false sinon.
+	 */
+	
+	function isQcm($texFile){
+		$fichier = new SplFileInfo($texFile);
+		$debutQcm = false;
+		
+		if ($fichier->isReadable())
+		{
+			$fichier_lu = $fichier->openFile('r');
+			while (!$fichier_lu->eof()) //Lecture du fichier ligne par ligne
+			{
+				$ligne = $fichier_lu->current();
+				if (!$debutQcm && preg_match('#\\\\begin{qcm}#', $ligne))
+					$debutQcm = true;
+						
+				if ( $debutQcm && preg_match('#\\\\end{qcm}#', $ligne))
+					return true;
+				
+				$fichier_lu->next();
+			}
+		}
+		return false;
+ 	}
+
+	/* deleteAllOldFiles()
+	 *
+	 * @param null 
+	 *	Supprime tous les fichiers uploader quand une nouvelle session est crée
+	 * @return null
+	 */
 
 	function deleteAllOldFiles(){
 		echo "delete all";// vider le contenu du fichier upload
