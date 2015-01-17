@@ -1,5 +1,15 @@
+<html>
+<head>
+	<meta charset="UTF-8"/>
+</head>
+<body>
 <?php
-
+/*
+		Recuperer Tête et queue
+		grille de réponse pour le prof
+		grille de réponse pour les élèves
+		OCR()
+*/
 
 /*** Variables ****
 	
@@ -12,8 +22,6 @@
 	$texFileResultat : variable représentant le fichier tex a retourner a l'utilisateur
 
 *******************
-
-	/*** PLUS SIMPLE ***/		//TEAM : Garthigan, Irvan, ??Ishak
 	
 	/** Vérifie l'extension d'un fichier
 	 * @param File $texFile variable représentant le fichier tex uploader par le formulaire
@@ -43,23 +51,29 @@
 	 *										[1] => Array ( ... ) 		);
 	 */
 	function extractQcm($texFile){
-
 		$fichier = new SplFileInfo($texFile);
 		$posCurseur = -1; //Position de la question dans le tableau
 		if ($fichier->isReadable())
 		{
 			$fichier_lu = $fichier->openFile('r');
+			$n=0;
 			while (!$fichier_lu->eof()) //Lecture du fichier ligne par ligne
 			{
+				
 				$ligne = $fichier_lu->current();
 				if (preg_match('#\\question (.*)$#', $ligne, $tab)) 
-				{
+				{	$n=0;
 					$posCurseur++; 
 					$questionsReponses[$posCurseur]['Question'] = $tab[1];
-				}
-						
-				if (preg_match('#\\\\(?:reponse|reponsejuste) (.*)$#', $ligne, $tab))
-					$questionsReponses[$posCurseur]['Reponses'][] = $tab[1];
+				}						
+				if (preg_match('#\\\\(?:reponse) (.*)$#', $ligne, $tab)){
+					$questionsReponses[$posCurseur]['Reponses']["$n"] = $tab[1]; $n++;
+					}
+					
+				else if (preg_match('#\\\\(?:reponsejuste) (.*)$#', $ligne, $tab)){// C'est pour récuperer les bonnes réponses pour plus tard ...
+					$questionsReponses[$posCurseur]['Reponses']["rep$n"] = $tab[1]; 
+					$n++;
+					}
 				
 				$fichier_lu->next();
 			}
@@ -96,39 +110,8 @@
 		return $nbQcm;
 	}
 	
-	
-	/** Parcourir le tableau en faisant des swap de n.
-	 *
-	 * @param Array $tab Le tableau à parcourir.
-	 * @param integer $n Intervale pour effectuer le swap.
-	 * @return Array $tabSwap Le tableau swapper.
-	 */
-	function swap($tab, $n)
-	{
-		$tabSwap[] = null;
-		
-		if ($n > count($tab))
-			$n -= count($tab);
-			
-		for ($i=0; $i+$n<count($tab); $i++)
-		{
-			if (!isset($tabSwap[$i])) 
-			{
-				$tabSwap[$i] = $tab[$i+$n];
-				$tabSwap[$i+$n] = $tab[$i];
-			}
-		}
-		
-		for ($i=0; $i<count($tab); $i++)
-		{
-			if (!isset($tabSwap[$i]))
-				$tabSwap[$i] = $tab[$i];
-		}
-		
-		ksort($tabSwap);
-		return $tabSwap;
-	}
-	
+
+	 
 
 /*******************************/ //fonctions ajoutés par Adel LE 18/12/2014
 
@@ -166,61 +149,29 @@
 //**************************************************************************************************************************************************/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 
-
-
-	/*** PLUS COMPLEXE ***/		//TEAM : Paul, François, ??Ishak ,??Adel
-
-	/** Mélange l'ordre des questions et des réponses de manière différente selon le nombre de questions dans un fichier.
-	 * Voir shuffle($array) : http://fr.php.net/manual/fr/function.shuffle.php
-		Complexité:
-		test pour la taille du fichier:
-				<X:		swap   (n,n)(n,n+1)
-				>X:		shuffle	 ()
-	 * @param Array $questionsReponses
-	 * @param integer $num_swap Permet de définir l'intervalle pour effectuer le swap.
-	 * @return array $questionsReponsesMelanger, null si échec
-	 */
 	function melange($questionsReponses, $num_swap) 
 	{
-		$limite = 15;
-		$questionsReponsesMelanger = null;
-		if (isset($questionsReponses)) 
-		{
-			if (count($questionsReponses) > $limite) //Cas où on a beaucoup de questions
-			{
-				$num_case=0; //position courante du nouveau tableau mélangé
-				for ($i=0; $i<count($questionsReponses); $i++)
-					$tabCle[]=$i; // Va nous servir pour le mélange des questions
-			
-				shuffle($tabCle);
-			
-				foreach ($tabCle as $posCurseur) 
-				{
-					$questionsReponsesMelanger[$num_case]['Question'] = $questionsReponses[$posCurseur]['Question']; //Récupération des questions mélangés
-					if (isset($questionsReponses[$posCurseur]['Reponses']))
-					{
-						shuffle($questionsReponses[$posCurseur]['Reponses']);
-						
-						foreach ($questionsReponses[$posCurseur]['Reponses'] as $reponse) 
-							$questionsReponsesMelanger[$num_case]['Reponses'][] = $reponse; //Récupération des réponses mélangés
-					}
-					$num_case++;
-				}
-			}
-		    
-			else if (count($questionsReponses) < $limite) //Cas où on a peu de questions
-			{
-				for ($i=0; $i<count($questionsReponses); $i++)
-				{	
-					$questionsMelanger = swap($questionsReponses, $num_swap);
-					$questionsReponsesMelanger = $questionsMelanger;
-					$questionsReponsesMelanger[$i]['Reponses'] = swap($questionsMelanger[$i]['Reponses'], $num_swap+$i);
-				}
-			}
+		for($i=0;$i<count($questionsReponses);$i++){
+			shuffle_assoc($questionsReponses[$i]["Reponses"]);
 		}
+		$questionsReponsesMelanger=$questionsReponses;
+		echo "<p></p>";
 		return $questionsReponsesMelanger;
 	}
 	
+	function shuffle_assoc(&$array) {
+        $keys = array_keys($array);
+
+        shuffle($keys);
+
+        foreach($keys as $key) {
+            $new[$key] = $array[$key];
+        }
+
+        $array = $new;
+
+        return true;
+    }
 	
 	/** Génère le nombre de qcm différents demandés
 	 * Utilise la fonction melange($questionsReponses)
@@ -230,7 +181,7 @@
 	 * @param integer $nbrQcmVoulu Nombre de qcm que l'utilisateur veut générer.
 	 * @return $tabQuestionsReponses Tableau de $questionsReponses mélangé.
 	 */
-	function genererTabQuestionReponses($questionsReponses, $nbrQcmVoulu){ 
+	function genererTabQuestionReponses($questionsReponses, $nbrQcmVoulu){
 		for ($i=0; $i<$nbrQcmVoulu; $i++) {
 			$tabQuestionsReponses[$i] = melange($questionsReponses, $i);
 		}
@@ -243,9 +194,9 @@
 	 * @param Array $tabQuestionsReponses Tableau de $questionsReponses mélangé.
 	 * @return File $texFileResultat Le fichier Qcm proposé à l'utilisateur.
 	 */
-	function genererTexFileResultat($tabQuestionsReponses,$typeQ){
+	function genererTexFileResultat($tabQuestionsReponses,$typeQ,$chiffreOuLettre,$texFile){
 		$texFileResultat = fopen('ddl/fichier_genere.tex', 'w');
-		fputs ($texFileResultat, debutDocument(11)); // Susceptible de changer car on pourrait récuperer les packages directement à partir du fichier ..
+		fputs ($texFileResultat, avantQcm($texFile)); // Susceptible de changer car on pourrait récuperer les packages directement à partir du fichier ..
 		
 		for ($i=0; $i<count($tabQuestionsReponses); $i++)
 		{
@@ -253,7 +204,7 @@
 			
 			fputs($texFileResultat, numeroQCM($i+1));
 			foreach ($tabQuestionsReponses[$i] as $questionReponses) {
-				fputs($texFileResultat, corpsQcm($questionReponses, $typeQ, 'chiffre', ')'));
+				fputs($texFileResultat, corpsQcm($questionReponses, $typeQ, $chiffreOuLettre));
 			}
 			
 			fputs($texFileResultat, finQcm());
@@ -261,11 +212,96 @@
 				fputs ($texFileResultat, "\n\t\\newpage\n");
 		}
 			
-		fputs ($texFileResultat, finDocument());
+		fputs ($texFileResultat, apresQcm($texFile));
 		fclose($texFileResultat);
 		
 		return $texFileResultat;
 	}
+	
+	function genererCorrige($tabQuestionsReponses){
+			/*parcourir tout le tableau
+					je crée un arrayCorrige
+					pour chaque QCM faire:
+						je crée un arrayQCM 
+						je parcour les question:
+								je parcour les réponses
+									je crée un array
+									je lis les clés des questions
+									si clés  preg "rep" 
+										ajouter case noire à array
+									si non
+										ajouter case blanche à array
+								j'ajoute l'array à l'arrayQCM	
+						j'ajoue l'arrayCorrige à
+			
+			*/
+		$tabFinal= array();
+		for($i=0;$i<count($tabQuestionsReponses);$i++){
+			$qcm= array();
+			foreach($tabQuestionsReponses[$i] as $tabQR){
+				$q=array();
+				foreach($tabQR['Reponses'] as $rep => $val){
+					if(preg_match("#rep#",$rep)){
+						$q[]='■';
+					}
+					else{
+						$q[]='□';
+					}
+				}
+				$qcm[]=$q;
+			}
+			$tabFinal[]=$qcm;
+		}
+		$fichierRep = serialize($tabFinal);
+		$_SESSION['corrige'] = $fichierRep;
+		return $tabFinal;
+	
+	}
+
+	function genererGrilleRep($tabQuestionsReponses,$numerotation){
+		$texFileResultat = fopen('ddl/grilleRep.tex', 'w');
+		$debut = '\documentclass[a4paper]{article}'."\n".'\pagestyle{empty}'."\n".'\usepackage[17pt]{extsizes}'."\n".'\usepackage[francais]{babel}'."\n".'\usepackage[latin1]{inputenc}'."\n".'\usepackage[T1]{fontenc}'."\n".'\usepackage[top=2cm, bottom=2cm, left=2cm, right=2cm]{geometry}'."\n".'\usepackage{amsmath}'."\n".'\usepackage{MnSymbol}'."\n".'\usepackage{wasysym}'."\n".'\begin{document}';
+		fputs($texFileResultat, $debut);
+		foreach ($tabQuestionsReponses as $numQcms => $qcm) {
+			$str ="\n\t".'\begin{center}'."\n\t\t".'qcm '.($numQcms+1)."\n\t".'\end{center}'."\n";
+			fputs($texFileResultat,$str);
+			$contenu = '';
+			$MaxNbrQ = 0;
+			$numQ = 1;
+			$type = 0;
+			if ($numerotation == 'chiffre')
+				$type = '1';
+			else if ($numerotation == 'lettre')
+				$type = 'a';
+			foreach ($qcm as $question) {
+				$nbrQ = 0;
+				$contenu .="\n\t\t\t".$numQ.' . ';
+				foreach ($question['Reponses'] as $reponses){
+					$contenu .= '&$\square$';
+				}
+				$nbrQ = count($question['Reponses']);
+				if($nbrQ > $MaxNbrQ)
+					$MaxNbrQ = $nbrQ;
+				$contenu .='\\\\';
+				$numQ++;
+			}
+			$str = "\t".'nom :\\\\'."\n\t".'prenom :\\\\'."\n\t".'groupe :'."\n\t".'\begin{center}'."\n\t\t".'\begin{tabular}{*{'.($MaxNbrQ+1).'}{c}}';
+			fputs($texFileResultat,$str);
+			$str = "\n\t\t\t";
+			for($i = 0;$i<$MaxNbrQ;$i++){
+				$str .= '&'.$type;
+				$type++;
+			}
+			fputs($texFileResultat,$str.'\\\\');
+			fputs($texFileResultat,$contenu);
+			$str = "\n\t\t".'\end{tabular}'."\n\t".'\end{center}'."\n\t".'\\newpage';
+			fputs($texFileResultat,$str);
+		}
+		$fin ="\n".'\end{document}';
+		fputs($texFileResultat,$fin);
+		fclose($texFileResultat);
+	}
+
 	
 
 //**************************************************************************************************************************************************/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\	
@@ -275,21 +311,29 @@
 	 * @param integer $taillePolice Correspond à la taille du texte
 	 * @return String $str 
 	 */
-	function debutDocument($taillePolice)
-	{
-		$str = 
-"\documentclass[a4paper, ".$taillePolice."pt]{article}
-\usepackage[francais]{babel}
-\usepackage[latin1]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage[top=2cm, bottom=2cm, left=2cm, right=2cm]{geometry}
-\usepackage{tablists}
-\usepackage{enumerate}
-		
-\begin{document}
-	\\newenvironment{qcm} {} {}";
-	
-		return $str;
+	function avantQcm($texFile){
+		$fichier= fopen($texFile,'r');
+		$debut = fgets($fichier);
+		$debut.='\usepackage{tablists}
+\usepackage{enumerate}'."\n";
+		while($lignes = fgets($fichier) and !preg_match("#\\\begin{qcm}#", $lignes))
+			$debut.=$lignes;
+		fclose($fichier);
+		return $debut;
+	}
+
+	function apresQcm($texFile){
+		$fichier= fopen($texFile,'r');
+		$fin = '';
+		$end = false;
+		while($lignes = fgets($fichier)){
+			if($end)
+				$fin .= $lignes;	
+			else if(preg_match("#\\\\end{qcm}#", $lignes))
+				$end = true;
+		}
+		fclose($fichier);
+		return $fin;
 	}
 	
 	
@@ -297,16 +341,8 @@
 	 * @param integer $num_repetition Numéro du QCM
 	 * @return String $str 
 	 */
-	function numeroQCM($num_repetition)
-	{
-		$str =
-"	
-	QCM ".$num_repetition."
-	
-	Ecrivez votre nom et prenom :
-	\begin{qcm}
-		\begin{enumerate}";
-	
+	function numeroQCM($num_repetition){
+		$str ="QCM ".$num_repetition."\begin{enumerate}";
 		return $str;
 	}
 	
@@ -319,7 +355,7 @@
 	 * @param String $ponctuation Sysmbole qui suit le $codage.
 	 * @return String $str La question et ses réponse en format Latex
 	 */
-	function corpsQcm($questionReponses, $modeReponse, $codage, $ponctuation)
+	function corpsQcm($questionReponses, $modeReponse, $codage)
 	{
 		if ($modeReponse == 'liste') {
 			$env = "enumerate";
@@ -336,7 +372,7 @@
 		else if ($codage == 'lettre')
 			$code = 'a';
 			
-		$code .= $ponctuation;
+		$code .= ')';
 		
 		$str = "\n\t\t\t".'\item '.$questionReponses['Question']."\n";
 		if (isset($questionReponses['Reponses'])) //Si une reponse existe pour la question
@@ -353,25 +389,45 @@
 	/* Fin d'un environnement Qcm
 	 * @return String $str 
 	 */
-	function finQcm()
-	{
-		$str =
-"
-		\\end{enumerate}
-	\\end{qcm}";
-		
+	function finQcm(){
+		$str ='\end{enumerate}';
 		return $str;
 	}
 	
+	function nbQPQCM($tabQCM,$nbQuestions){
+		$tabres=array();
+		for($i=0;$i<count($tabQCM);$i++){
+			shuffle_assoc($tabQCM[$i]);
+			$output = array_slice($tabQCM[$i], 0, $nbQuestions); 
+			$tabres[]=$output;
+		}
+		
+		return $tabres;
+	}
+	
+	function correctMain($tabQCM){
+		$File = fopen('ddl/fichier_corr_hand.doc', 'w');
+		for($i=0;$i<count($tabQCM);$i++){
+			$str="";
+			$str.="QCM".($i+1)."\r\n \r\n";
+			foreach($tabQCM[$i] as $tab){
+				$ligne="";
+				foreach($tab as $cle => $rep){
+					$ligne=$ligne."\t".$rep;
+				}
+				$str.=" $ligne \r\n \r\n";
+			}
+			fwrite($File, $str);
+			}
+		fclose($File);
+	}
 	
 	/* Fin du doccument proposé à l'utilisateur.
 	 * @return String $str 
 	 */
-	function finDocument()
-	{
-		$str = "
-\\end{document}";
-	
-		return $str;
+
+
+	function deleteAllOldFiles(){
+		echo "delete all";// vider le contenu du fichier upload
 	}
 ?>

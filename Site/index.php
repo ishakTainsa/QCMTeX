@@ -1,6 +1,8 @@
 <?php
-	include 'fichiers/entete.php';
+session_start();
+	$title = 'QCMTeX  - Génération';
 	include('fichiers/fonctions.php');
+	include 'fichiers/entete.php';
 ?>
 						<h2>Génération</h2>
 						<p>
@@ -11,29 +13,41 @@
 							<div id="cadre">
 								<?php
 								$test = true;
-								if(isset($_FILES['nom'])){
+								if(isset($_FILES['nom']) && $_POST['nbQ'] > 0 && $_POST['nbQCM'] > 0){
 									$test = false;
 								    $dossier = 'upload/';
 								    $fichier = basename($_FILES['nom']['name']);
-								    if(!move_uploaded_file($_FILES['nom']['tmp_name'], $dossier . $fichier))
-											echo '<div class="alert alert-danger" role="alert"><strong>Erreur!</strong> un problème est survenue lors du téléchargement de votre fichier</div>';
-								    if(isset($_POST['nbQCM'])){	
-										if(isTexFile($_FILES['nom']['name']))
-											$tableauQR=extractQcm($dossier.$fichier);
-										if(isQcm($dossier.$fichier)){
-											$nbrQcmVoulu=$_POST['nbQCM'];
-											$tabQRM=genererTabQuestionReponses($tableauQR, $nbrQcmVoulu);
-											if(isset($_POST['typeQ']))
-												$tabRes=genererTexFileResultat($tabQRM,$_POST['typeQ']);
-											echo '<a href="ddl/fichier_genere.tex">SUJETS</a>';
+								    if(!move_uploaded_file($_FILES['nom']['tmp_name'], $dossier . $fichier)){
+										echo '<div class="alert alert-danger" role="alert"><strong>Erreur!</strong> un problème est survenue lors du téléchargement de votre fichier</div>';
+								    	$test = true;
+								    }
+								    else{
+										if(isTexFile($dossier.$fichier)){
+											$tableauQR = extractQcm($dossier.$fichier);
+											if(isQcm($dossier.$fichier)){
+												$nbrQcmVoulu = $_POST['nbQCM'];
+												$tabQRM = genererTabQuestionReponses($tableauQR,$nbrQcmVoulu);
+												$tab = nbQPQCM($tabQRM,$_POST["nbQ"]);
+												genererGrilleRep($tab,$_POST['typeR']);
+												$tabMain = genererCorrige($tab);
+												correctMain($tabMain);
+												if(isset($_POST['typeQ']))
+													genererTexFileResultat($tab,$_POST['typeQ'],$_POST['typeR'],$dossier.$fichier);
+												echo '<p><a href="ddl/fichier_genere.tex">Sujets en LaTeX</a></p>';
+												echo '<p><a href="ddl/grilleRep.tex">Grilles de réponse en LaTeX</a></p>';
+												echo '<p><a href="fichiers/genereFichierCorr.php">Fichier de correction automatique</a></p>';
+												echo '<p><a href="ddl/fichier_corr_hand.doc">Fichier de correction manuelle</a></p>';
+											}
+											else{
+												$test = true;
+												echo '<div class="alert alert-danger" role="alert"><strong>Attention!</strong> une erreur est survenue avec votre fichier.Vérifier que  et que <strong>l\'environement qcm</strong> est bien présent</div>';
+											}
 										}
 										else{
 											$test = true;
-											echo '<div class="alert alert-danger" role="alert"><strong>Attention!</strong> une erreur est survenue avec votre fichier.Vérifier que l\'extension du fichier est bien <strong>\'.tex\'</strong> et que <strong>l\'environement qcm</strong> est bien présent</div>';
-										}		
+											echo '<div class="alert alert-danger" role="alert"><strong>Attention!</strong> une erreur est survenue avec votre fichier.Vérifier que l\'extension du fichier est bien <strong>\'.tex\'</strong></div>';
+										}
 									}
-									else
-										$test = true;
 								}
 								if($test){
 									?>
@@ -51,13 +65,24 @@
 									        <input type="number" value="1" class="form-control" name="nbQ"></p>
 									    </div>
 									    <div class="form-group">
-									    	<label>Layout des QCMs :</label><br>
+									    	<label>Alignement des réponses </label><br>
 									    	<div class="radio">
 									    		<label>
-									    			<input type="radio" name="typeQ" value="liste" checked> Liste
+									    			<input type="radio" name="typeQ" value="liste" checked> Vertical
 									    		</label>
 									    		<label>
-													<input type="radio" name="typeQ" value="colonne"> Colonne
+													<input type="radio" name="typeQ" value="colonne"> Horizontal
+												</label>
+											</div>
+										</div>
+										<div class="form-group">
+									    	<label>Numérotation des réponses </label><br>
+									    	<div class="radio">
+									    		<label>
+									    			<input type="radio" name="typeR" value="lettre" checked> Par lettre
+									    		</label>
+									    		<label>
+													<input type="radio" name="typeR" value="chiffre"> Par nombre
 												</label>
 											</div>
 										</div>
