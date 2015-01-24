@@ -6,25 +6,25 @@ session_start();
 ?>
 						<h2>Génération</h2>
 						<p>
-							Pour générer vos QCMs vous devez préalablement utiliser <a href="">le package TeX, QCMTeX </a> .
-							Glisser et déposer vos fichiers TeX dans le cadre ci-dessous pour générer vos QCMs .Consultez la <a href="#documentation">documentation.</a>pour d'avantage d'informations
+							Pour générer vos QCMs vous devez donnez un fichier Tex contenant l'environement <strong>"QCM"</strong> ainsi que ces question avec la commande <strong>"\question"</strong> ainsi que ces réponses :
+							"\reponse" pour une réponse fause , "\reponsejuste" pour une réponse juste
 
 						</p>
 							<div id="cadre">
 								<?php
 								$test = true;
-								if(isset($_FILES['nom']) && $_POST['nbQ'] > 0 && $_POST['nbQCM'] > 0){
+								if(isset($_FILES['nom']) && $_POST['nbQ'] > 0 && $_POST['nbQCM'] > 0){ // test si les champs du formulaire sont bien remplis
 									$test = false;
 								    $dossier = 'upload/';
 								    $fichier = basename($_FILES['nom']['name']);
-								    if(!move_uploaded_file($_FILES['nom']['tmp_name'], $dossier . $fichier)){
+								    if(!move_uploaded_file($_FILES['nom']['tmp_name'], $dossier . $fichier)){// test si le fichier est bien uploader
 										echo '<div class="alert alert-danger" role="alert"><strong>Erreur!</strong> un problème est survenue lors du téléchargement de votre fichier</div>';
 								    	$test = true;
 								    }
 								    else{
-										if(isTexFile($dossier.$fichier)){
+										if(isTexFile($dossier.$fichier)){ // test si le fichier a bien l'extension ".tex"
 											$tableauQR = extractQcm($dossier.$fichier);
-											if(isQcm($dossier.$fichier)){
+											if(isQcm($dossier.$fichier)){ // test si le fichier a bien l'environement qcm
 												$nbrQcmVoulu = $_POST['nbQCM'];
 												$tabQRM = genererTabQuestionReponses($tableauQR,$nbrQcmVoulu);
 												$tab = nbQPQCM($tabQRM,$_POST["nbQ"]);

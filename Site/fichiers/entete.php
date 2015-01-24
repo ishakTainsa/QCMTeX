@@ -21,16 +21,7 @@
 				<ul class="nav nav-tabs" role="tablist" id="myTab">
 					<li role="presentation" <?php if($title =='QCMTeX  - Génération') echo 'class="active"'; ?> ><a href="index.php">Générer</a></li>
 					<li role="presentation" <?php if($title =='QCMTeX  - Correction') echo 'class="active"'; ?> ><a href="correction.php">Corriger</a></li>
-					<li role="presentation" class="dropdown">
-						<a class="dropdown-toggle" href="#" role="button" aria-expanded="false">
-							Documentation <span class="caret"></span>
-					</a>
-					<ul class="dropdown-menu" role="menu">
-						<li role="presentation"><a href="#"> Liens 1</a></li>
-						<li role="presentation"><a href="#"> Liens 2</a></li>
-						<li role="presentation"><a href="#"> Liens 3</a></li>
-					</ul>
-					</li>
+					<li role="presentation" ><a href="https://github.com/ChristopherBLESCHET/QCMTeX#qcmtex-projet-s3---iut-villetaneuse" target="_blank">Configuration du server</a></li>
 				</ul>
 				<div class="tab-content">	
 					<div role="tabpanel" class="content">

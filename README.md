@@ -7,7 +7,7 @@
 ### Pour Windows
 ##### ImageMagick
     
-Installer [ImageMagick](http://www.imagemagick.org/download/binaries/).  
+Installer [ImageMagick](http://www.imagemagick.org/download/binaries/).  et [GhostScript](http://www.ghostscript.com/download/gsdnld.html)   
 Télécharger "ImageMagik-X.X.X-X-XXX-x64-ddl.exe"
     
 Pour tester l'installation, faire dans la cmd
@@ -32,7 +32,7 @@ fichier a mettre dans le repertoire suivant :
 
 ### Pour Linux
 ##### ImageMagick  
-Installer ImageMagick :
+Installer ImageMagick et [GhostScript](http://www.ghostscript.com/download/gsdnld.html)   
 
         sudo apt-get install imagemagick
     

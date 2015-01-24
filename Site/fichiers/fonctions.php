@@ -434,7 +434,16 @@
 	 */
 
 	function deleteAllOldFiles(){
-		echo "delete all";// vider le contenu du fichier upload
+		$dossiers = array("ddl","upload"); // les dossiers a vider
+		foreach ($dossiers as $dossier) {
+			$repertoire = opendir($dossier); // ouvre le dossier
+			while($fichier = readdir($repertoire)){ // boucle pour parcourir tous les fichier du repertoire
+				$cheminFichier = $dossier."/".$fichier; 
+				if (!is_dir($fichier))// test si le $fichier n'est pas un repertoire
+			       unlink($cheminFichier); // suprime le fichier
+			}
+			closedir($repertoire);
+		}
 	}
 
 	/************ Fin du fichier ***********/
