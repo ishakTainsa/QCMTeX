@@ -1,6 +1,6 @@
 # QCMTeX Projet S3 - Iut Villetaneuse
 
-  Un générateur de qcm en LaTeX avec correcteur automatique.
+  Un générateur de qcm en LaTeX avec correcteur automatique. Le générateur a été codé en PHP, il permet de générer des QCM différents avec des fiches de réponses pour chaque QCM. Nous utilison un OCR, pour corriger les fiches réponses et donner des notes aux étudiants.
 
 ## Installation du Correcteur sur le serveur
 
