@@ -26,8 +26,17 @@ session_start();
 											$tableauQR = extractQcm($dossier.$fichier);
 											if(isQcm($dossier.$fichier)){ // test si le fichier a bien l'environement qcm
 												$nbrQcmVoulu = $_POST['nbQCM'];
+											
 												$tabQRM = genererTabQuestionReponses($tableauQR,$nbrQcmVoulu);
+												//print_r($tabQRM);
+												
 												$tab = nbQPQCM($tabQRM,$_POST["nbQ"]);
+												//print_r($tab);
+												
+												
+												//$tab2=genererCorrectionAutomatique($tab);
+												//var_dump($tab2);
+											
 												genererCorrectionMain(genererCorrectionAutomatique($tab));
 												genererTexFileGrilleDeReponse($tab,$_POST['typeR']);
 												genererTexFileResultat($tab,$_POST['typeQ'],$_POST['typeR'],$dossier.$fichier);

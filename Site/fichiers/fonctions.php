@@ -23,7 +23,9 @@
 				{	$n=0;
 					$posCurseur++; 
 					$questionsReponses[$posCurseur]['Question'] = $tab[1];
-				}						
+					$questionsReponses[$posCurseur]['id']=$posCurseur;
+					
+				}
 				if (preg_match('#\\\\(?:reponse) (.*)$#', $ligne, $tab)){
 					$questionsReponses[$posCurseur]['Reponses']["$n"] = $tab[1]; $n++;
 					}
@@ -69,7 +71,7 @@
 	}
 
 
-	function melange($questionsReponses, $num_swap) 
+	function melange($questionsReponses, $num_swap)
 	{
 		for($i=0;$i<count($questionsReponses);$i++){
 			shuffle_assoc($questionsReponses[$i]["Reponses"]);
@@ -306,6 +308,7 @@
 			$qcm = array();
 			foreach($tabQuestionsReponses[$i] as $tabQR){
 				$q = array();
+				$q['id'] = $tabQR['id'];
 				foreach($tabQR['Reponses'] as $rep => $val){
 					if(preg_match("#rep#",$rep)){
 						$q[]='■';
@@ -315,6 +318,7 @@
 					}
 				}
 				$qcm[]=$q;
+				
 			}
 			$tabCorrection[]=$qcm;
 		}
