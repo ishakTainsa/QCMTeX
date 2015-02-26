@@ -449,6 +449,44 @@
 			closedir($repertoire);
 		}
 	}
+		/*Adel:  Petite idée pour simplifier les calcules, on fait de l'objet et voilà vous aurez les classes finies Samedi 28
+	*/
+	 public class Question{
+		 private $id;
+		 private $nbBonnesReponses=0;
+		 private $nbMauvaisesReponses=0;
+		
+		 public function __construct($id){
+			 $this->id = $id;
+		 }
+		 public function ajouterBonneReponse(){
+			 if($this->$nbBonnesReponses!=0) $this->$nbBonnesReponses++;
+		}
+		 public function ajouterMauvaiseReponse(){
+			 if($this->$nbMauvaisesReponses!=0) $this->$nb++;
+		 }
+		
+	 }
+	
+	 public class StatsQuestions{
+		  $tabQuestions = array();
+		 public function ajouterQuestion(Question question){
+			 
+			 
+		}
+			public function calculerMoyenne(){
+				
+			}
+			public function calculerET(){
+				
+			}
+			
+			public function calculerVariance(){
+				
+			}
+		
+		
+	 }
 
 	/************ Fin du fichier ***********/
 ?>
