@@ -451,7 +451,7 @@
 	}
 		/*Adel:  Petite idée pour simplifier les calcules, on fait de l'objet et voilà vous aurez les classes finies Samedi 28
 	*/
-	 // public class Question{
+	 //class Question{
 		 // private $id;
 		 // private $nbBonnesReponses=0;
 		 // private $nbMauvaisesReponses=0;
@@ -468,7 +468,7 @@
 		
 	 // }
 	
-	 // public class StatsQuestions{
+	 //class StatsQuestions{
 		  // $tabQuestions = array();
 		 // public function ajouterQuestion(Question question){
 			 
