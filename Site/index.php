@@ -4,7 +4,9 @@ session_start();
 	include('fichiers/fonctions.php');
 	include 'fichiers/entete.php';
 ?>
-						<h2>Génération</h2>
+						<h2>Génération</h2> 
+					
+<h2><a href="https://www.youtube.com/watch?v=i9vsbVHvIss" class="html5lightbox" data-width="480" data-height="320" title="Big Buck Bunny"><img src='dist/css/demo.jpg' /></a></h2>
 						<p>
 							Pour générer vos QCMs vous devez donnez un fichier Tex contenant l'environement <strong>"QCM"</strong> ainsi que ces question avec la commande <strong>"\question"</strong> ainsi que ces réponses :
 							"\reponse" pour une réponse fause , "\reponsejuste" pour une réponse juste
@@ -28,14 +30,14 @@ session_start();
 												$nbrQcmVoulu = $_POST['nbQCM'];
 											
 												$tabQRM = genererTabQuestionReponses($tableauQR,$nbrQcmVoulu);
-												//print_r($tabQRM);
+												print_r($tabQRM);
 												echo '<p> ___________________ 0</p>';
 												$tab = nbQPQCM($tabQRM,$_POST["nbQ"]);
-												//print_r($tab);
+												print_r($tab);
 												echo '<p> ____________________</p>';
 												
 												$tab2=genererCorrectionAutomatique($tab);
-												//var_dump($tab2);
+												var_dump($tab2);
 												echo '<p> ______________________ 2</p>';
 												
 												genererCorrectionMain(genererCorrectionAutomatique($tab));

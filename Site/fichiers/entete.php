@@ -6,7 +6,10 @@
 <!doctype html>
 <html>
 	<head>
+		
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script type="text/javascript" src="fichiers/html5lightbox/jquery.js"></script>
+		<script type="text/javascript" src="fichiers/html5lightbox/html5lightbox.js"></script>
 		<title><?php echo $title; ?></title>
 		<meta charset="utf8">
 		
@@ -75,3 +78,4 @@
 				</ul>
 				<div class="tab-content">	
 					<div role="tabpanel" class="content">
+					
