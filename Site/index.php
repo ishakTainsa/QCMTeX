@@ -28,14 +28,14 @@ session_start();
 												$nbrQcmVoulu = $_POST['nbQCM'];
 											
 												$tabQRM = genererTabQuestionReponses($tableauQR,$nbrQcmVoulu);
-												print_r($tabQRM);
+												//print_r($tabQRM);
 												echo '<p> ___________________ 0</p>';
 												$tab = nbQPQCM($tabQRM,$_POST["nbQ"]);
-												print_r($tab);
+												//print_r($tab);
 												echo '<p> ____________________</p>';
 												
 												$tab2=genererCorrectionAutomatique($tab);
-												var_dump($tab2);
+												//var_dump($tab2);
 												echo '<p> ______________________ 2</p>';
 												
 												genererCorrectionMain(genererCorrectionAutomatique($tab));
