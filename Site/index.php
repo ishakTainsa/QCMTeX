@@ -28,15 +28,16 @@ session_start();
 												$nbrQcmVoulu = $_POST['nbQCM'];
 											
 												$tabQRM = genererTabQuestionReponses($tableauQR,$nbrQcmVoulu);
-												//print_r($tabQRM);
-												
+												print_r($tabQRM);
+												echo '<p> ___________________ 0</p>';
 												$tab = nbQPQCM($tabQRM,$_POST["nbQ"]);
-												//print_r($tab);
+												print_r($tab);
+												echo '<p> ____________________</p>';
 												
+												$tab2=genererCorrectionAutomatique($tab);
+												var_dump($tab2);
+												echo '<p> ______________________ 2</p>';
 												
-												//$tab2=genererCorrectionAutomatique($tab);
-												//var_dump($tab2);
-											
 												genererCorrectionMain(genererCorrectionAutomatique($tab));
 												genererTexFileGrilleDeReponse($tab,$_POST['typeR']);
 												genererTexFileResultat($tab,$_POST['typeQ'],$_POST['typeR'],$dossier.$fichier);
@@ -60,19 +61,20 @@ session_start();
 									?>
 									<form method="post" class="form-horizontal" action="#" enctype="multipart/form-data">
 										<div class="form-group">
-											<label>Fichier Tex</label>
+											<label>Fichier Tex</label><img src="dist/css/Qmark.png" title="HODOR !!" class="textTooltip" />
 											<input type="file" name="nom" />
 										</div>
 										<div class="form-group">
-									        <label>Nombre de QCMs à générer</label>
-									        <input type="number" value="1" class="form-control" name="nbQCM"></p>
+											
+									        <label >Nombre de QCMs à générer </label><img src="dist/css/Qmark.png" title="HODOR HODOR HODORRRR !!" class="textTooltip" />
+									        <input type="number" value="1" class="form-control" name="nbQCM">
 									    </div>
 									    <div class="form-group">
-									        <label>Nombre de questions par QCM</label>
+									        <label >Nombre de questions par QCM</label><img src="dist/css/Qmark.png" title="HODOR HODOR ??" class="textTooltip" />
 									        <input type="number" value="1" class="form-control" name="nbQ"></p>
 									    </div>
 									    <div class="form-group">
-									    	<label>Alignement des réponses </label><br>
+									    	<label>Alignement des réponses </label><img src="dist/css/Qmark.png" title="" class="imageTooltip" /><br> 
 									    	<div class="radio">
 									    		<label>
 									    			<input type="radio" name="typeQ" value="liste" checked> Vertical
@@ -83,7 +85,7 @@ session_start();
 											</div>
 										</div>
 										<div class="form-group">
-									    	<label>Numérotation des réponses </label><br>
+									    	<label>Numérotation des réponses </label><img src="dist/css/Qmark.png" title="" class="imageTooltip" /><br>
 									    	<div class="radio">
 									    		<label>
 									    			<input type="radio" name="typeR" value="lettre" checked> Par lettre
@@ -95,6 +97,8 @@ session_start();
 										</div>
 										<input type="submit" class="btn-perso btn btn-primary" value="Générer"/>
 									</form>
+									
+									
 									<?php 
 								}
 								?>
